@@ -1,7 +1,7 @@
 pipeline {
     
    agent {
-        label 'ssh'
+        label 'none'
     }
 
     tools {
@@ -11,12 +11,18 @@ pipeline {
     
     stages{
         stage ('Checkout') {
+	   agent {
+        	label 'ssh'
+    		}
             steps{
-                checkout poll: false, scm: scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/mmehdizadeh7777/docker-agent-demo.git']])
+                checkout poll: false, scm: scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/mmehdizadeh7777/Architecting-Jenkins-Pipeline.git']])
             }
             
         }
         stage ('Build') {
+	agent {
+        	label 'java'
+    		}
             steps {
                 echo "Build Stage is in progress"
                 sh 'mvn compile'
@@ -24,6 +30,9 @@ pipeline {
             
         }
         stage ('Test'){
+	agent {
+        	label 'java'
+    		}
             steps {
                 echo "Test Stage is in progress"
                 sh 'mvn test'
@@ -31,6 +40,9 @@ pipeline {
             
         }
         stage('Deploy'){
+		agent {
+        		label 'ssh'
+    		}
             input {
               message 'Do you want to deploy build?'
               ok 'Yes I want'
